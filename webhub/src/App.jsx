@@ -4,7 +4,7 @@ import { Users, LayoutDashboard, Utensils, Table, Loader2, Edit, Trash2, Plus, X
 const API_BASE_URL = 'http://localhost:3000/api';
 
 // --- HELPER FUNCTIONS ---
-//const generateId = (prefix = 'id') => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 9)}`;
+const generateId = (prefix = 'id') => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 9)}`;
 
 // --- MOCK DATABASE SETUP ---
 // Simulate initial data structure
@@ -507,6 +507,7 @@ const UsersView = ({ users, onSave, onDelete, isAuthReady }) => {
         setConfirmDelete(true);
     };
 
+
     // CRUD Operations (Mocked)
     const handleSave = async (userData) => {
         setIsSaving(true);
@@ -527,7 +528,13 @@ const UsersView = ({ users, onSave, onDelete, isAuthReady }) => {
             //     handleDataOperation('CREATE', 'users', { ...dataToSave, id: generateId('user') });
             // }
 
-            await onSave(userData);
+            if (editingUser) {
+            // UPDATE
+            await onSave({ ...editingUser, ...userData });
+        } else {
+            // CREATE
+            await onSave({ ...userData, id: generateId("user") });
+        }
 
             setEditingUser(null);
             setIsModalOpen(false);
